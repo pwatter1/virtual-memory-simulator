@@ -26,17 +26,25 @@ pfn_t tlb_lookup(vpn_t vpn, int write)
 	 * it was a hit!
 	 */
 	
-	for(i = 0; i < tlb_size; i++){
+	for(i = 0; i < tlb_size; i++)
+	{
 		
-		if(IS_SET(tlb[i].flags, VALID) && (tlb[i].vpn == vpn)){
+		if(IS_SET(tlb[i].flags, VALID) && (tlb[i].vpn == vpn))
+		{
 			
 			tlbhits_count++;
-			if(write){
+			
+			/* if write is enabled, set write flag */
+			if(write){  
 				SET_BIT(tlb[i].flags, DIRTY);
-			}else{  CLEAR_BIT(tlb[i].flags, DIRTY);}
+			}else{      
+				CLEAR_BIT(tlb[i].flags, DIRTY);
+			}
+			
 			SET_BIT(tlb[i].flags, USED);
+			
+			/* set and return pfn */
 			return tlb[i].pfn;
-			/* return pfn;*/
 		}
 	}
 
@@ -55,30 +63,36 @@ pfn_t tlb_lookup(vpn_t vpn, int write)
 
 	/* TASK 2c: Evict an invalid entry and update the TLB with the new page */
 	
-	for(i = 0; i < tlb_size; i++){
-		
+	for(i = 0; i < tlb_size; i++)
+	{
+		/* get first invalid entry */
 		if(!(IS_SET(tlb[i].flags, VALID))){		
 			tlb[i].pfn = pfn;
 			tlb[i].vpn = vpn;
 			SET_BIT(tlb[i].flags, VALID);
 			SET_BIT(tlb[i].flags, USED);
-			if(write){SET_BIT(tlb[i].flags, DIRTY);}
-			/* check = 1; ret*/
+			
+			if(write)
+				SET_BIT(tlb[i].flags, DIRTY);
+
 			break; /* return pfn; */
 		}	
 	}
 
-	for(;;){
-		
-		for(i = 0; i < tlb_size; i++){
-			
-			if(!(IS_SET(tlb[i].flags, USED))){			
+	while(1)
+	{
+		for(i = 0; i < tlb_size; i++)
+		{	
+			if(!(IS_SET(tlb[i].flags, USED)))
+			{			
 				tlb[i].pfn = pfn;
 				tlb[i].vpn = vpn;
 				SET_BIT(tlb[i].flags, VALID);
 				SET_BIT(tlb[i].flags, USED);
-				if(write){SET_BIT(tlb[i].flags, DIRTY);}
-				/* check = 1; break; */
+				
+				if(write)
+					SET_BIT(tlb[i].flags, DIRTY);
+	
 				return pfn;
 			}else{
 				CLEAR_BIT(tlb[i].flags, USED);
