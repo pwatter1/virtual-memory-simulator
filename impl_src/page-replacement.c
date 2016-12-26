@@ -19,34 +19,39 @@ pfn_t get_free_frame(void)
 	/* TASK 4a: Iterate through the reverse lookup table to see if there is a free frame. If so, return it. */
 
 	int    i;
-	pcb_t *pr;
+	pcb_t  *pr;
 	pte_t  page;
 	
-	for(i = 0; i < NUM_PHYS_PAGES; i++){
-		if(!((rlt+i)->pcb)){ 
+	for(i = 0; i < NUM_PHYS_PAGES; i++)
+		if(!((rlt+i)->pcb)) 
 			return (pfn_t) i;
-		}	
-	}
+	
+	
 
 	/* TASK 4b: If none of the frames are free, we must evict a frame.
 	 * For each frame, if it is used, set it as unused. If it is already unused, return the frame. 
 	 * Repeat the previous step till you find an unused frame. 
 	 */ 
-	for(;;){	
-		for(i = 0; i < NUM_PHYS_PAGES; i++){
+	while(1){	
+		for(i = 0; i < NUM_PHYS_PAGES; i++)
+		{
 			pr = (rlt+i)->pcb;
 			page = pr->pagetable[(rlt+i)->vpn];
 		
 			/* if(IS_SET(page.pfn, VALID){return i;} */
 			
-			if(IS_SET(page.pfn, USED)){ 
+			if(IS_SET(page.pfn, USED))
+			{ 
 				CLEAR_BIT(page.pfn, USED);
-			}else{ 
+			}
+			else
+			{ 
 				return current_pagetable[i].pfn; 
 			}
 		}		
 	}
 
-	/* to satisfy the compiler */
-	return 0;
+	/* final return to satisfy the compiler */
+	/* return shouldnt reach this line */
+	return pfn;
 }
