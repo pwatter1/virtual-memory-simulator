@@ -24,9 +24,12 @@ pfn_t pagetable_lookup(vpn_t vpn, int write)
 
 	/* pfn_t entry = 0; */
 	
-	if(IS_SET(current_pagetable[vpn].flags, VALID)){ return current_pagetable[vpn].pfn;}
-
-	else{
+	if(IS_SET(current_pagetable[vpn].flags, VALID))
+	{ 	
+		return current_pagetable[vpn].pfn;
+	}
+	else
+	{
 		pagefaults_count++;
 		return pagefault_handler(vpn, write);
 	}
