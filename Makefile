@@ -1,5 +1,4 @@
-# NOTE: You should NOT have to modify this file. Break at your own risk!
-
+# VM Makefile
 # these are the two directories where source code can be located
 IMPL   	= impl_src
 SIM 	= sim_src
