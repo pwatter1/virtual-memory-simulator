@@ -38,19 +38,15 @@ pfn_t pagefault_handler(vpn_t request_vpn, int write)
 	 * 3) Clear the victim page's TLB entry (hint: tlb_clearone()).
 	 */
 	
-	if(rlt[victim_pfn].pcb != NULL){
-		/* if(IS_SET(victim_pcb->pagetable[victim_vpn].flags, VALID)){*/
-
-		if(IS_SET(victim_pcb->pagetable[victim_vpn].flags, DIRTY)){
-			page_to_disk(victim_pfn, victim_vpn, victim_pcb->pid);
-			/*CLEAR_BIT(victim_pcb->pagetable[rlt[victim_vpn].flags, DIRTY);*/
+	if(rlt[victim_pfn].pcb != NULL)
+	{
+		if(IS_SET(victim_pcb->pagetable[victim_vpn].flags, DIRTY))
+		{
+			page_to_disk(victim_pfn, victim_vpn, victim_pcb->pid);	
 		}
 	
 		CLEAR_BIT(victim_pcb->pagetable[victim_vpn].flags, VALID);
-		tlb_clearone(victim_vpn);
-	
-		/* rlt[victim_pfn].pcb->pagetable[rlt[victim_pfn].vpn].flags = 0; */
-		/* tlb_clearone(rlt[victim_pfn].vpn); */			
+		tlb_clearone(victim_vpn);			
 	}
 
 	/* TASK 5c: Update the reverse lookup table so that the frame's ownership is updated 
@@ -70,12 +66,15 @@ pfn_t pagefault_handler(vpn_t request_vpn, int write)
 	
 	rlt[victim_pfn].pcb = current;
 	rlt[victim_pfn].vpn = request_vpn;
+	
 	current_pagetable[request_vpn].pfn = victim_pfn;
 	
 	SET_BIT(current_pagetable[request_vpn].flags, USED);
 	SET_BIT(current_pagetable[request_vpn].flags, VALID);
 
-	if(write){ SET_BIT(current_pagetable[request_vpn].flags, DIRTY);}
+	if(write)
+		SET_BIT(current_pagetable[request_vpn].flags, DIRTY);
+	
 	page_from_disk(victim_pfn, request_vpn, current->pid);
 
 	return victim_pfn;
