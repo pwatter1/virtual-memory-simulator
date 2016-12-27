@@ -2,11 +2,12 @@
 
 Simulator managing memory models with critical pieces missing - wrote/debugged the following...
 
-1. TLBlookup.c
+1. TLB-lookup.c
 2. Macros.h
 3. Page-replacement.c
 4. Page-eviction.c
-5. Page-table.c
+5. Page-lookup.c
+6. Eval.c
 
 # usage
 
